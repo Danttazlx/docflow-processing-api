@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from controller.etl_controller import router
+from controller.controller import router
 
 app = FastAPI()
 
