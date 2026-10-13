@@ -1,8 +1,11 @@
 package Project_Invento.demo.dto;
 
+import lombok.Builder;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+@Builder
 public record DocumentInput(
 
         String fileName,

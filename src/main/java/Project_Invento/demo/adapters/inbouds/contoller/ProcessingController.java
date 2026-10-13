@@ -6,7 +6,7 @@ import Project_Invento.demo.dto.ExecutionResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+        import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -20,17 +20,17 @@ public class ProcessingController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public ExecutionResponseDto createExecution (
-                @RequestParam("file") MultipartFile file) throws IOException {
+            @RequestParam("file") MultipartFile file) throws IOException {
 
-          DocumentInput documentInput = new DocumentInput(
+        DocumentInput documentInput = new DocumentInput(
 
 
-                  file.getOriginalFilename(),
-                  file.getContentType(),
-                  file.getBytes()
-          );
+                file.getOriginalFilename(),
+                file.getContentType(),
+                file.getBytes()
+        );
 
-            return serviceAutomation.validateFile(documentInput);
+        return serviceAutomation.validateFile(documentInput);
     }
 
 
