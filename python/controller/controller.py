@@ -1,15 +1,16 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, HTTPException
+from docx import Document
+from io import BytesIO
 
 router = APIRouter()
 
 
 @router.post("/etl/process")
 async def process(file: UploadFile = File(...)):
-
     try:
-        content = file.read()
+        content = await file.read()
 
-        document = await Document(BytesIO(content))
+        Document(BytesIO(content))
 
         return {
             "fileName": file.filename,
@@ -17,8 +18,8 @@ async def process(file: UploadFile = File(...)):
             "message": "Document processed successfully"
         }
 
-    except Exception:
+    except Exception as e:
         raise HTTPException(
             status_code=500,
             detail="Failed to process document"
-        )
+        ) from e

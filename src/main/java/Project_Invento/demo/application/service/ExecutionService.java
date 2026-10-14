@@ -12,6 +12,7 @@ import Project_Invento.demo.ports.out.etl.EtlProcessorPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.LocalDateTime;
 
@@ -42,19 +43,17 @@ public class ExecutionService {
             log.info("File validated successfully: {}", fileName);
 
             AutomationExecution model = new AutomationExecution();
-
             model.setFileName(file.fileName());
             model.setCreatedAt(LocalDateTime.now());
             model.setStatus(ExecutionStatus.RECEIVED);
 
-            // testar se repositorPort esta sendo chamado mesmo
-            // verificar se estar chamando no adapter (1)
+
             AutomationExecution automationExecution = repositoryPort.save(model);
 
 
             try {
 
-                EtlResponseDto responsePython = processorPort.processEtl(file);
+                processorPort.processEtl(file);
 
                 automationExecution.setStatus(ExecutionStatus.COMPLETED);
                 automationExecution.setFinishedAt(LocalDateTime.now());
@@ -63,28 +62,25 @@ public class ExecutionService {
 
             } catch (Exception e) {
 
+                String errorMessage = e.getMessage();
+
                 automationExecution.setStatus(ExecutionStatus.FAILED);
                 automationExecution.setFinishedAt(LocalDateTime.now());
-                automationExecution.setErrorMessage(e.getMessage());
+                automationExecution.setErrorMessage(errorMessage);
 
                 repositoryPort.save(automationExecution);
 
                 throw new EtlProcessingException(
-                        "Failed to process document",
+                        errorMessage,
                         e
                 );
             }
-                     automationExecution = repositoryPort.save(automationExecution);
 
-
-
-        ExecutionResponseDto responseDto = new ExecutionResponseDto();
-
-        responseDto.setId(automationExecution.getId());
-        responseDto.setFileName(automationExecution.getFileName());
-        responseDto.setCreatedAt(automationExecution.getCreatedAt());
-        responseDto.setStatus(automationExecution.getStatus());
-
-        return responseDto;
-    }
+            return ExecutionResponseDto.builder()
+                    .id(automationExecution.getId())
+                    .fileName(automationExecution.getFileName())
+                    .status(automationExecution.getStatus())
+                    .createdAt(automationExecution.getCreatedAt())
+                    .build();
+        }
 }

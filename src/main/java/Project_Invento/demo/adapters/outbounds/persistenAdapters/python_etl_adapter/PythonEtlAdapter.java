@@ -34,14 +34,14 @@ public class PythonEtlAdapter implements EtlProcessorPort {
                 .contentType(MediaType.parseMediaType(file.contentType()));
 
 
-        return clientConfig.pythonWebClient()    // a gente retorna o client
-                .post()                                                           // metodo HTTP
-                .uri("/etl/process")                                          // Uri rota que foi mapeada no endpoint do servidor
-                .contentType(MediaType.MULTIPART_FORM_DATA)                       // contentType basicamente é o tipo da requisicao
-                .accept(MediaType.APPLICATION_JSON)                               // accept é oque a gente espera na resposta do servidor
-                .body(BodyInserters.fromMultipartData(builder.build()))           // body basicamente diz o que vai na requisicao
-                .retrieve( )                                                      // Retrieve basicamnte define oque vem apos dele o response do servidor
-                .bodyToMono(EtlResponseDto.class)                                 // Comverte oque vem no Body da Requisicao para 1 ou 0 (Mono)
-                .block();                                                         // Bloqueia as Threds
-    }
+        return clientConfig.pythonWebClient()
+                    .post()
+                    .uri("/etl/process")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromMultipartData(builder.build()))
+                    .retrieve( )
+                    .bodyToMono(EtlResponseDto.class)
+                    .block();
+        }
 }

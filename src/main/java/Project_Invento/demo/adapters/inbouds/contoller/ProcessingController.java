@@ -24,7 +24,6 @@ public class ProcessingController {
 
         DocumentInput documentInput = new DocumentInput(
 
-
                 file.getOriginalFilename(),
                 file.getContentType(),
                 file.getBytes()
